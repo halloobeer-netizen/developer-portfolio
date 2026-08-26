@@ -1,0 +1,35 @@
+name: Apply hero profile logo
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-hero-logo.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-hero-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add profile logo to hero only
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<div class="hero-brand-mark" aria-hidden="true"></div>'
+          new = '<div class="hero-brand-mark"><img src="assets/profile-logo.svg" alt="Deni Setiadi software engineering logo" /></div>'
+          if old not in s:
+              raise SystemExit('Empty hero brand mark not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit hero logo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "brand: add profile logo to hero"
+          git push
