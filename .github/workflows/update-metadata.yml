@@ -1,4 +1,4 @@
-name: Apply professional portfolio copy
+name: Connect portfolio links
 
 on:
   push:
@@ -9,12 +9,12 @@ permissions:
   contents: write
 
 jobs:
-  update-copy:
+  connect-links:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update portfolio copy without changing layout
+      - name: Connect repository and contact links without changing layout
         shell: python
         run: |
           from pathlib import Path
@@ -22,55 +22,38 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
 
-          replacements = {
-            '<span class="project-type">Customer Data Platform</span>': '<span class="project-type">Customer Data & Mapping Platform</span>',
-            '<p>A customer database and mapping platform designed for internet service operations, with structured data management and location-based customer visibility.</p>': '<p>A full-stack operational platform for internet service providers, combining customer records, package management, spreadsheet import, dashboards, and customer mapping.</p>',
-            '<span>Customer Database</span>\n                <span>Excel / CSV Import</span>\n                <span>Interactive Mapping</span>\n                <span>Admin Dashboard</span>\n                <span>Cloud Deployment</span>': '<span>Next.js</span>\n                <span>Prisma</span>\n                <span>Leaflet</span>\n                <span>Data Platform</span>\n                <span>Deployment</span>',
-            '<div><small>Challenge</small><strong>Organize customer, package, and location data in one operational system.</strong></div>': '<div><small>Challenge</small><strong>Unify customer records, service packages, and location data into one operational workflow.</strong></div>',
-            '<div><small>Solution</small><strong>Centralized web dashboard with import, editing, mapping, and structured customer management.</strong></div>': '<div><small>Solution</small><strong>A centralized full-stack dashboard for customer management, data import, editing, and interactive mapping.</strong></div>',
+          old_project = '<a class="project-action" href="#contact">Case Study <span>→</span></a>\n                <span class="project-note">Selected interface walkthrough</span>'
+          project_links = [
+            '<a class="project-action" href="https://github.com/halloobeer-netizen/karputindo-net" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
+            '<a class="project-action" href="https://github.com/halloobeer-netizen/jagad-stokis" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
+            '<a class="project-action" href="https://github.com/halloobeer-netizen/peatland-intelligence-platform" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
+          ]
 
-            '<span class="project-type">Stock & Order Management</span>': '<span class="project-type">Inventory & Order Management Platform</span>',
-            '<p>A full-stack franchise supply and stock management platform combining product inventory, ordering workflows, secure administration, operational control, and responsive customer-facing experiences.</p>': '<p>A full-stack platform for product catalog, inventory, checkout, ordering, and administrative operations designed for day-to-day stock workflows.</p>',
-            '<span>Inventory</span>\n                <span>Checkout</span>\n                <span>Order Management</span>\n                <span>WhatsApp Integration</span>\n                <span>Admin Dashboard</span>': '<span>Next.js</span>\n                <span>React</span>\n                <span>Prisma</span>\n                <span>Operations</span>\n                <span>WhatsApp Integration</span>',
-            '<div><small>Challenge</small><strong>Connect stock control, ordering, checkout, and administration in a single workflow.</strong></div>': '<div><small>Challenge</small><strong>Connect product, stock, checkout, ordering, and administration in one reliable workflow.</strong></div>',
-            '<div><small>Solution</small><strong>Full-stack operational platform with product management, order handling, database logic, and messaging integration.</strong></div>': '<div><small>Solution</small><strong>A full-stack inventory and order platform with operational control, database logic, and messaging integration.</strong></div>',
+          for new_link in project_links:
+              if old_project not in s:
+                  raise SystemExit('Expected project action placeholder not found')
+              s = s.replace(old_project, new_link, 1)
 
-            '<span class="project-type">Environmental Data Platform</span>': '<span class="project-type">Environmental Survey & Spatial Data Platform</span>',
-            '<p>A field survey intelligence platform for peatland ecosystem inventory, combining survey progress monitoring, structured environmental measurements, spatial location data, secure access, and responsive field-ready workflows.</p>': '<p>A digital field-survey platform for managing peatland observations, measurements, progress, coordinates, documentation, and spatial information.</p>',
-            '<span>Survey Dashboard</span>\n                <span>Spatial Mapping</span>\n                <span>pH / EC / TDS Data</span>\n                <span>Google Authentication</span>\n                <span>Responsive Field Workflow</span>': '<span>Leaflet</span>\n                <span>Firebase</span>\n                <span>Spatial Data</span>\n                <span>Field Survey</span>\n                <span>Environmental Data</span>',
-            '<div><small>Challenge</small><strong>Unify field measurements, survey progress, coordinates, and environmental records into one reliable operational view.</strong></div>': '<div><small>Challenge</small><strong>Bring field measurements, survey progress, coordinates, and documentation into one structured system.</strong></div>',
-            '<div><small>Solution</small><strong>Responsive survey intelligence platform with authentication, progress tracking, spatial location views, structured field parameters, and centralized data management.</strong></div>': '<div><small>Solution</small><strong>A responsive survey platform combining structured environmental data, spatial views, progress tracking, and secure access.</strong></div>',
+          old_contact = '''        <div class="contact-actions">
+          <button class="btn btn-primary contact-placeholder" type="button" aria-describedby="contact-note">Connect Contact Details</button>
+          <p id="contact-note">Professional email and GitHub links are the final publishing details to connect.</p>
+        </div>'''
+          new_contact = '''        <div class="contact-actions">
+          <a class="btn btn-primary" href="mailto:halloobeer@gmail.com" aria-describedby="contact-note">Email Me</a>
+          <p id="contact-note">GitHub: <a href="https://github.com/halloobeer-netizen" target="_blank" rel="noreferrer">halloobeer-netizen</a></p>
+        </div>'''
 
-            '<h2>From product idea to deployed system.</h2>': '<h2>From idea to working product.</h2>',
-            '<p>I work across application architecture, interfaces, backend logic, data workflows, integrations, and deployment.</p>': '<p>I focus on practical systems that are clear to use, maintainable, and ready to evolve.</p>',
-
-            '<h2>Clear systems. Practical decisions. Reliable delivery.</h2>': '<h2>Plan carefully. Build clearly. Improve continuously.</h2>',
-            '<div><span>01</span><p><strong>Understand the workflow first.</strong> Products should solve the operational problem before adding complexity.</p></div>': '<div><span>01</span><p><strong>Plan & Design.</strong> Translate requirements into clear product flows, interfaces, and system structure.</p></div>',
-            '<div><span>02</span><p><strong>Build for real use.</strong> Interfaces, data models, and automation are designed around day-to-day usability.</p></div>': '<div><span>02</span><p><strong>Build & Integrate.</strong> Connect frontend, backend, data, APIs, and automation into one coherent product.</p></div>',
-            '<div><span>03</span><p><strong>Ship, learn, improve.</strong> I iterate from working systems and refine based on what the product actually needs.</p></div>': '<div><span>03</span><p><strong>Test, Deploy & Improve.</strong> Validate the workflow, ship a working system, and refine it through real use.</p></div>',
-
-            '<h2>I build digital products around real problems, not just screens.</h2>': '<h2>Engineering with a product mindset.</h2>',
-            '<p>My work combines software engineering, product thinking, structured data, automation, and deployment. I focus on systems that are clear to use, dependable in daily operations, and designed to evolve as requirements grow.</p>': '<p>I build software by connecting product requirements, interface design, data architecture, and implementation into one coherent system.</p>',
-            '<p>I enjoy turning fragmented workflows into cohesive digital products—from customer and inventory platforms to field-data and mapping systems—while keeping the experience simple for the people who actually use them.</p>': '<p>My work spans operational dashboards, customer and inventory systems, mapping applications, field-data platforms, and AI-assisted workflows.</p>',
-            '<p>AI is part of that toolkit: used where it adds practical value to development, automation, and intelligent product capabilities rather than as decoration.</p>': '<p>I use AI where it adds practical value to engineering, automation, decision support, and product capability.</p>'
-          }
-
-          missing = []
-          for old, new in replacements.items():
-              if old not in s:
-                  missing.append(old[:80])
-              s = s.replace(old, new, 1)
-
-          if missing:
-              raise SystemExit('Expected copy not found: ' + ' | '.join(missing))
+          if old_contact not in s:
+              raise SystemExit('Expected contact placeholder not found')
+          s = s.replace(old_contact, new_contact, 1)
 
           p.write_text(s, encoding='utf-8')
 
-      - name: Commit copy update
+      - name: Commit link updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "content: refine professional portfolio copy"
+          git commit -m "feat: connect contact and project repository links"
           git push
