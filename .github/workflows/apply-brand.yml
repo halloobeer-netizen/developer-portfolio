@@ -1,4 +1,4 @@
-name: Apply elegant portfolio hero
+name: Apply new portfolio logo
 
 on:
   push:
@@ -9,39 +9,26 @@ permissions:
   contents: write
 
 jobs:
-  apply-hero:
+  apply-logo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Refine hero presentation
+      - name: Replace old logo references
         shell: python
         run: |
           from pathlib import Path
 
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-
-          css_ref = '<link rel="stylesheet" href="brand.css" />'
-          if 'hero-polish.css' not in s:
-              if css_ref not in s:
-                  raise SystemExit('brand.css reference not found')
-              s = s.replace(css_ref, css_ref + '\n  <link rel="stylesheet" href="hero-polish.css" />', 1)
-
-          old = '<aside class="hero-panel reveal delay-1" aria-label="Profile summary">\n          <div class="panel-topline">\n            <span>Selected Focus</span>\n            <span>2026</span>\n          </div>\n          <div class="panel-stat">\n            <strong>03</strong>\n            <span>Featured production-focused projects</span>\n          </div>\n          <div class="panel-list">\n            <div><span>01</span><p>Business systems & customer platforms</p></div>\n            <div><span>02</span><p>Inventory, ordering & operational tools</p></div>\n            <div><span>03</span><p>Environmental data & spatial intelligence</p></div>\n          </div>\n        </aside>'
-
-          new = '<aside class="hero-brand-panel reveal delay-1" aria-label="Deni Setiadi brand identity">\n          <div class="hero-brand-topline">\n            <span>Software · AI · Data</span>\n            <span>2026</span>\n          </div>\n          <div class="hero-brand-mark">\n            <img src="assets/brand-logo.svg" alt="" aria-hidden="true" />\n          </div>\n          <div class="hero-brand-copy">\n            <strong>Building thoughtful systems from concept to production.</strong>\n            <span>Full-Stack · Automation · Data Platforms</span>\n          </div>\n        </aside>'
-
-          if old not in s:
-              raise SystemExit('Existing hero panel not found')
-          s = s.replace(old, new, 1)
+          s = s.replace('assets/brand-logo.svg', 'assets/hero-profile-logo.webp')
           p.write_text(s, encoding='utf-8')
 
-      - name: Commit hero update
+      - name: Commit logo update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "style: refine elegant portfolio hero"
+          git commit -m "fix: use new profile logo across landing page"
           git push
