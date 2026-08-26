@@ -1,16 +1,17 @@
 .hero {
   position: relative;
   overflow: hidden;
+  background: var(--bg);
 }
 .hero::before {
   content: "";
   position: absolute;
   width: 520px;
   height: 520px;
-  right: -170px;
-  top: -170px;
+  right: -180px;
+  top: -180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(59,130,246,.08), rgba(59,130,246,0) 68%);
+  background: radial-gradient(circle, rgba(59,130,246,.055), rgba(59,130,246,0) 70%);
   pointer-events: none;
 }
 .hero-grid {
@@ -21,50 +22,70 @@
 .hero-copy { max-width: 790px; }
 .hero h1 { max-width: 900px; }
 .hero-lead { max-width: 700px; }
+
 .hero-brand-panel {
-  min-height: 420px;
+  min-height: 430px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(21,25,31,.94), rgba(15,18,23,.96));
-  padding: 30px;
+  border-radius: 20px;
+  background: #101318;
+  padding: 0;
   position: relative;
   overflow: hidden;
 }
 .hero-brand-panel::after {
   content: "";
   position: absolute;
-  inset: auto -20% -48% 24%;
-  height: 260px;
-  background: radial-gradient(circle, rgba(59,130,246,.11), rgba(59,130,246,0) 70%);
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13,15,18,.02) 38%, rgba(13,15,18,.18) 62%, rgba(13,15,18,.78) 100%);
   pointer-events: none;
 }
 .hero-brand-topline {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 20px;
+  z-index: 3;
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  color: #7f8995;
+  color: rgba(243,245,247,.74);
   font-size: 10px;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
 .hero-brand-mark {
-  display: grid;
-  place-items: center;
-  padding: 30px 0 24px;
+  flex: 1;
+  min-height: 320px;
+  padding: 0;
+  display: block;
+  background-image: url('https://avatars.githubusercontent.com/u/316687421?v=4');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: saturate(.82) contrast(1.02) brightness(.94);
 }
 .hero-brand-mark img {
-  width: min(210px, 68%);
-  height: auto;
-  filter: drop-shadow(0 16px 36px rgba(0,0,0,.28));
+  display: none;
 }
 .hero-brand-copy {
   position: relative;
-  z-index: 1;
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
+  z-index: 3;
+  padding: 22px 24px 24px;
+  border-top: 1px solid rgba(39,46,55,.88);
+  background: rgba(15,18,23,.96);
+}
+.hero-brand-copy::before {
+  content: "Deni Setiadi";
+  display: block;
+  margin-bottom: 7px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
 .hero-brand-copy strong {
   display: block;
@@ -83,12 +104,13 @@
   text-transform: uppercase;
 }
 @media (max-width: 900px) {
-  .hero-brand-panel { min-height: 360px; max-width: 560px; }
-  .hero-brand-mark { padding: 24px 0 18px; }
-  .hero-brand-mark img { width: 180px; }
+  .hero-brand-panel { min-height: 390px; max-width: 560px; }
+  .hero-brand-mark { min-height: 285px; }
 }
 @media (max-width: 620px) {
-  .hero-brand-panel { min-height: 310px; padding: 24px; }
-  .hero-brand-mark img { width: 150px; }
+  .hero-brand-panel { min-height: 340px; border-radius: 16px; }
+  .hero-brand-mark { min-height: 250px; }
+  .hero-brand-topline { top: 15px; left: 17px; right: 17px; }
+  .hero-brand-copy { padding: 18px 20px 20px; }
   .hero-brand-copy strong { font-size: 16px; }
 }
