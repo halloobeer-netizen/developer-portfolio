@@ -66,13 +66,6 @@
   z-index: 1;
   padding: 22px 0 18px;
 }
-.hero-brand-mark img {
-  display: block;
-  width: min(250px, 78%);
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 18px 34px rgba(0,0,0,.28));
-}
 .hero-brand-copy {
   position: relative;
   z-index: 2;
@@ -108,11 +101,9 @@
 @media (max-width: 900px) {
   .hero-brand-panel { min-height: 360px; max-width: 560px; }
   .hero-brand-mark { min-height: 220px; }
-  .hero-brand-mark img { width: 210px; }
 }
 @media (max-width: 620px) {
   .hero-brand-panel { min-height: 320px; padding: 22px; border-radius: 16px; }
   .hero-brand-mark { min-height: 190px; }
-  .hero-brand-mark img { width: 170px; }
   .hero-brand-copy strong { font-size: 16px; }
 }
