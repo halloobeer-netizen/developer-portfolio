@@ -22,6 +22,7 @@
 .hero-copy { max-width: 790px; }
 .hero h1 { max-width: 900px; }
 .hero-lead { max-width: 700px; }
+.hero .eyebrow { color: #168BFF; }
 
 .hero-brand-panel {
   min-height: 420px;
