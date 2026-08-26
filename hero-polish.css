@@ -85,10 +85,11 @@
 .hero-brand-copy::before {
   content: "JAGAVRE LABS";
   display: block;
-  margin-bottom: 7px;
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 700;
+  margin-bottom: 9px;
+  color: #168BFF;
+  font-size: 13px;
+  line-height: 1.15;
+  font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -135,6 +136,9 @@
   .hero-brand-mark img {
     width: min(72vw, 220px);
     max-height: 205px;
+  }
+  .hero-brand-copy::before {
+    font-size: 12px;
   }
   .hero-brand-copy strong { font-size: 16px; }
 }
