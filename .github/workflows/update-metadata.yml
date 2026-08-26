@@ -1,0 +1,56 @@
+name: Update portfolio metadata
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-metadata.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update metadata in index.html
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          start = s.index('  <meta name="description"')
+          end_marker = '  <title>Deni Setiadi — Software Engineer & AI Solutions Developer</title>'
+          end = s.index(end_marker, start) + len(end_marker)
+
+          new = '''  <title>Deni Setiadi — Software Engineer & AI Solutions Developer</title>
+          <meta name="description" content="Portfolio of Deni Setiadi, Software Engineer & AI Solutions Developer building modern web applications, intelligent digital products, and scalable software solutions." />
+          <meta name="author" content="Deni Setiadi" />
+          <meta name="theme-color" content="#0d0f12" />
+          <link rel="canonical" href="https://portfolio-static-final.vercel.app/" />
+
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="Deni Setiadi Portfolio" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:url" content="https://portfolio-static-final.vercel.app/" />
+          <meta property="og:title" content="Deni Setiadi — Software Engineer & AI Solutions Developer" />
+          <meta property="og:description" content="Portfolio of Deni Setiadi, Software Engineer & AI Solutions Developer building modern web applications, intelligent digital products, and scalable software solutions." />
+
+          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:title" content="Deni Setiadi — Software Engineer & AI Solutions Developer" />
+          <meta name="twitter:description" content="Portfolio of Deni Setiadi, Software Engineer & AI Solutions Developer building modern web applications, intelligent digital products, and scalable software solutions." />'''.replace('\n          ', '\n  ')
+
+          p.write_text(s[:start] + new + s[end:], encoding='utf-8')
+
+      - name: Commit metadata update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: improve social sharing metadata"
+          git push
