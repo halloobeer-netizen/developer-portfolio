@@ -1,4 +1,4 @@
-name: Fix portfolio email link
+name: Polish portfolio presentation
 
 on:
   push:
@@ -9,29 +9,88 @@ permissions:
   contents: write
 
 jobs:
-  fix-email:
+  polish-portfolio:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Make email button open Gmail compose
+      - name: Prepare image tools
+        run: python -m pip install --quiet pillow
+
+      - name: Polish hero, project status and social metadata
         shell: python
         run: |
           from pathlib import Path
+          from PIL import Image, ImageDraw, ImageFont
+
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          old = '<a class="btn btn-primary" href="mailto:halloobeer@gmail.com" aria-describedby="contact-note">Email Me</a>'
-          new = '<a class="btn btn-primary" href="https://mail.google.com/mail/?view=cm&fs=1&to=halloobeer@gmail.com" target="_blank" rel="noreferrer" aria-describedby="contact-note">Email Me</a>'
-          if old not in s:
-              raise SystemExit('Current email link not found')
-          s = s.replace(old, new, 1)
+
+          replacements = {
+            '<h1>Engineering digital products with clarity, intelligence, and purpose.</h1>': '<h1>Designing and engineering digital products built for real use.</h1>',
+            '<p class="hero-lead">I design and build modern web applications, data-driven platforms, intelligent digital products, and scalable software systems for real operational needs.</p>': '<p class="hero-lead">I design and build full-stack applications, intelligent systems, and data-driven platforms from product concept to production deployment.</p>',
+            '>Live Project ↗</a>': '>Live · Production ↗</a>',
+            '<span class="status-pill">Full-Stack</span>': '<span class="status-pill">Full-Stack · Production</span>',
+            '<span class="status-pill">Data · Mapping</span>': '<span class="status-pill">Data · Field Platform</span>',
+            '<meta name="twitter:card" content="summary" />': '<meta name="twitter:card" content="summary_large_image" />',
+          }
+
+          for old, new in replacements.items():
+              if old not in s:
+                  raise SystemExit(f'Expected text not found: {old}')
+              s = s.replace(old, new, 1)
+
+          og_marker = '<meta property="og:description" content="Portfolio of Deni Setiadi, Software Engineer & AI Solutions Developer building modern web applications, intelligent digital products, and scalable software solutions." />'
+          og_block = og_marker + '''
+          <meta property="og:image" content="https://portfolio-static-final.vercel.app/assets/portfolio-og.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Deni Setiadi — Software Engineer & AI Solutions Developer" />'''
+          if 'property="og:image"' not in s:
+              if og_marker not in s:
+                  raise SystemExit('Open Graph description marker not found')
+              s = s.replace(og_marker, og_block, 1)
+
+          twitter_marker = '<meta name="twitter:description" content="Portfolio of Deni Setiadi, Software Engineer & AI Solutions Developer building modern web applications, intelligent digital products, and scalable software solutions." />'
+          if 'name="twitter:image"' not in s:
+              if twitter_marker not in s:
+                  raise SystemExit('Twitter description marker not found')
+              s = s.replace(twitter_marker, twitter_marker + '\n<meta name="twitter:image" content="https://portfolio-static-final.vercel.app/assets/portfolio-og.png" />', 1)
+
           p.write_text(s, encoding='utf-8')
 
-      - name: Commit email fix
+          # Branded 1200x630 social preview matching the portfolio's dark visual language.
+          W, H = 1200, 630
+          img = Image.new('RGB', (W, H), '#0d0f12')
+          draw = ImageDraw.Draw(img)
+          draw.rounded_rectangle((70, 65, 1130, 565), radius=34, fill='#12151a', outline='#272e37', width=2)
+          draw.rounded_rectangle((860, 95, 1065, 300), radius=28, fill='#15191f', outline='#272e37', width=2)
+
+          def font(size, bold=False):
+              path = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf' if bold else '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+              return ImageFont.truetype(path, size)
+
+          accent = '#5d7ea8'
+          text = '#f3f5f7'
+          muted = '#9ca5b1'
+          draw.text((110, 115), 'PORTFOLIO · 2026', font=font(26, True), fill=accent)
+          draw.text((110, 180), 'Deni Setiadi', font=font(72, True), fill=text)
+          draw.text((110, 275), 'Software Engineer & AI Solutions Developer', font=font(34), fill=muted)
+          draw.text((110, 390), 'FULL-STACK APPLICATIONS', font=font(24, True), fill=text)
+          draw.text((110, 435), 'AI SOLUTIONS', font=font(24, True), fill=text)
+          draw.text((110, 480), 'DATA PLATFORMS', font=font(24, True), fill=text)
+          draw.text((905, 155), 'DS', font=font(74, True), fill=text)
+          draw.text((897, 250), 'BUILD · SHIP', font=font(26, True), fill=accent)
+
+          out = Path('assets/portfolio-og.png')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          img.save(out, 'PNG', optimize=True)
+
+      - name: Commit presentation polish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html assets/portfolio-og.png
           git diff --cached --quiet && exit 0
-          git commit -m "fix: open portfolio email button in Gmail compose"
+          git commit -m "polish: hero status and social preview"
           git push
