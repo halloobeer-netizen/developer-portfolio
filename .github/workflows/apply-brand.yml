@@ -1,0 +1,52 @@
+name: Apply primary brand logo
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-brand.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-brand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply brand logo without changing main layout
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_brand = '<a class="brand" href="#home" aria-label="Home">DS</a>'
+          new_brand = '<a class="brand brand-lockup" href="#home" aria-label="Deni Setiadi — Home"><img src="assets/brand-logo.svg" alt="" aria-hidden="true" /><span>Deni Setiadi</span></a>'
+          if old_brand not in s:
+              raise SystemExit('Header brand placeholder not found')
+          s = s.replace(old_brand, new_brand, 1)
+
+          old_cta = '<a class="nav-cta" href="#projects">View Work</a>'
+          new_cta = '<a class="nav-cta brand-contact-cta" href="#contact">Let\'s Connect</a>'
+          if old_cta not in s:
+              raise SystemExit('Header CTA placeholder not found')
+          s = s.replace(old_cta, new_cta, 1)
+
+          old_css = '<link rel="stylesheet" href="contact-icons.css" />'
+          new_css = '<link rel="stylesheet" href="contact-icons.css" />\n  <link rel="stylesheet" href="brand.css" />'
+          if old_css not in s:
+              raise SystemExit('Contact stylesheet reference not found')
+          s = s.replace(old_css, new_css, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit landing page branding
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "brand: integrate primary logo into landing page"
+          git push
