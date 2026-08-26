@@ -1,0 +1,49 @@
+.brand-lockup {
+  width: auto;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  border-radius: 0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.brand-lockup img {
+  width: 36px;
+  height: 36px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.brand-lockup span {
+  color: var(--text);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.brand-lockup:hover img {
+  transform: translateY(-1px);
+}
+
+.brand-lockup img {
+  transition: transform .2s ease;
+}
+
+.nav-cta.brand-contact-cta {
+  border-color: rgba(59, 130, 246, .55);
+  color: #dfeafe;
+  background: rgba(59, 130, 246, .07);
+}
+
+.nav-cta.brand-contact-cta:hover {
+  border-color: rgba(59, 130, 246, .9);
+  background: rgba(59, 130, 246, .12);
+}
+
+@media (max-width: 620px) {
+  .brand-lockup { gap: 8px; }
+  .brand-lockup img { width: 34px; height: 34px; }
+  .brand-lockup span { font-size: 13px; }
+}
