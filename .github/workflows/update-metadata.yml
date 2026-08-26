@@ -1,4 +1,4 @@
-name: Connect portfolio links
+name: Fix portfolio email link
 
 on:
   push:
@@ -9,41 +9,29 @@ permissions:
   contents: write
 
 jobs:
-  connect-links:
+  fix-email:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Connect repository and contact links without changing layout
+      - name: Make email button open Gmail compose
         shell: python
         run: |
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-
-          old_project = '<a class="project-action" href="#contact">Case Study <span>→</span></a>\n                <span class="project-note">Selected interface walkthrough</span>'
-          project_links = [
-            '<a class="project-action" href="https://github.com/halloobeer-netizen/karputindo-net" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
-            '<a class="project-action" href="https://github.com/halloobeer-netizen/jagad-stokis" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
-            '<a class="project-action" href="https://github.com/halloobeer-netizen/peatland-intelligence-platform" target="_blank" rel="noreferrer">View Repository <span>→</span></a>\n                <span class="project-note">Source code & project repository</span>',
-          ]
-          for new_link in project_links:
-              if old_project not in s:
-                  raise SystemExit('Expected project action placeholder not found')
-              s = s.replace(old_project, new_link, 1)
-
-          old_contact = '        <div class="contact-actions">\n          <button class="btn btn-primary contact-placeholder" type="button" aria-describedby="contact-note">Connect Contact Details</button>\n          <p id="contact-note">Professional email and GitHub links are the final publishing details to connect.</p>\n        </div>'
-          new_contact = '        <div class="contact-actions">\n          <a class="btn btn-primary" href="mailto:halloobeer@gmail.com" aria-describedby="contact-note">Email Me</a>\n          <p id="contact-note">GitHub: <a href="https://github.com/halloobeer-netizen" target="_blank" rel="noreferrer">halloobeer-netizen</a></p>\n        </div>'
-          if old_contact not in s:
-              raise SystemExit('Expected contact placeholder not found')
-          s = s.replace(old_contact, new_contact, 1)
+          old = '<a class="btn btn-primary" href="mailto:halloobeer@gmail.com" aria-describedby="contact-note">Email Me</a>'
+          new = '<a class="btn btn-primary" href="https://mail.google.com/mail/?view=cm&fs=1&to=halloobeer@gmail.com" target="_blank" rel="noreferrer" aria-describedby="contact-note">Email Me</a>'
+          if old not in s:
+              raise SystemExit('Current email link not found')
+          s = s.replace(old, new, 1)
           p.write_text(s, encoding='utf-8')
 
-      - name: Commit link updates
+      - name: Commit email fix
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "feat: connect contact and project repository links"
+          git commit -m "fix: open portfolio email button in Gmail compose"
           git push
