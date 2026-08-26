@@ -83,7 +83,7 @@
   border-top: 1px solid var(--line);
 }
 .hero-brand-copy::before {
-  content: "Deni Setiadi";
+  content: "JAGAVRE LABS";
   display: block;
   margin-bottom: 7px;
   color: var(--accent);
