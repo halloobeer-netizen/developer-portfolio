@@ -22,12 +22,12 @@ if (menuToggle && nav) {
   const closeMenu = () => {
     nav.classList.remove('open');
     menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.setAttribute('aria-label', 'Open navigation');
+    menuToggle.setAttribute('aria-label', 'Buka navigasi');
   };
   menuToggle.addEventListener('click', () => {
     const open = menuToggle.getAttribute('aria-expanded') === 'true';
     menuToggle.setAttribute('aria-expanded', String(!open));
-    menuToggle.setAttribute('aria-label', open ? 'Open navigation' : 'Close navigation');
+    menuToggle.setAttribute('aria-label', open ? 'Buka navigasi' : 'Tutup navigasi');
     nav.classList.toggle('open', !open);
   });
   nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
@@ -63,7 +63,7 @@ function closeLightbox() {
 document.querySelectorAll('.project-main-image').forEach((img) => {
   img.setAttribute('tabindex', '0');
   img.setAttribute('role', 'button');
-  img.setAttribute('aria-label', `Open larger preview: ${img.alt}`);
+  img.setAttribute('aria-label', `Buka pratinjau lebih besar: ${img.alt}`);
   img.addEventListener('click', () => openLightbox(img));
   img.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(img); } });
 });
@@ -74,7 +74,7 @@ document.querySelectorAll('.project-gallery figure').forEach((figure) => {
   if (!img) return;
   figure.setAttribute('tabindex', '0');
   figure.setAttribute('role', 'button');
-  figure.setAttribute('aria-label', `Open larger preview: ${caption || img.alt}`);
+  figure.setAttribute('aria-label', `Buka pratinjau lebih besar: ${caption || img.alt}`);
   figure.addEventListener('click', () => openLightbox(img, caption));
   figure.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(img, caption); } });
 });
